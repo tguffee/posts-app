@@ -25,13 +25,18 @@ class Post_Controller extends CI_Controller {
 	}
 	
 	public function index() {
+		$this->load->view('post_view');
+	}
+	
+	//retrieves all posts from db
+	public function loadPosts() {
 		$posts = $this->Post_model->getPosts();
 		$data = array();
 		$data['posts'] = $posts;
-
-		$this->load->view('post_view', $data);
+		echo json_encode($data);
 	}
 	
+	//calls crowdtangle api to get posts and persists to db
 	public function refreshPosts() {
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
@@ -42,7 +47,6 @@ class Post_Controller extends CI_Controller {
 				
 		));
 		$resp = curl_exec($curl);
-		//echo 'Error: "' . curl_error($curl) . '" - Code: ' . curl_errno($curl);
 		curl_close($curl);
 		
 		$obj = json_decode($resp);
@@ -50,16 +54,13 @@ class Post_Controller extends CI_Controller {
 		foreach ($posts as $post) {
 			$this->Post_model->insertPost($post);
 		}
-		
-		redirect('post_controller/index');
 	}
 	
+	//deletes post from db
 	public function deletePost() {
-		$post_id = $this->input->post('delete');
+		$post_id = $_POST['id'];
 		$update_criteria = array('id' => $post_id);
 		$this->Post_model->deletePost($update_criteria);
-
-		redirect('post_controller/index');
 	}
 	
 }

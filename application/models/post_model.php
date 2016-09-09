@@ -3,12 +3,12 @@
 
 class Post_model extends CI_Model {
 
-
   function __construct() {
     parent::__construct();
     
   } 
 
+  // gets post sorted by id
   function getPosts() {
   	$query = $this->db->order_by('id', 'ASC')->get('posts');
   	$results = array();
@@ -19,7 +19,6 @@ class Post_model extends CI_Model {
   }
   
   function insertPost($data) {
-  	
   	$this->db->replace('posts', $data);
   }
   
